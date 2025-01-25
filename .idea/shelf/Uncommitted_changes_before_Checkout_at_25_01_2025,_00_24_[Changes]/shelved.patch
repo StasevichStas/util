@@ -1,0 +1,248 @@
+Index: Str.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Str {\n}\n
+===================================================================
+diff --git a/Str.java b/Str.java
+--- a/Str.java	(revision d273eaec210ada08f0bdccb021480b72e11a23c0)
++++ b/Str.java	(date 1737739248418)
+@@ -1,2 +1,85 @@
+ public class Str {
++
++    private static int count_int = 0;
++    private static int count_float = 0;
++    private static int count_string = 0;
++    private static long sum_int = 0;
++    private static long min_int;
++    private static int str_min;
++    private static long max_int;
++    private static int str_max;
++    private static double sum_float = 0.0, min_float, max_float;
++
++
++    public boolean check_int(String line) {
++        try {
++            long number_int = Long.parseLong(line);
++            if (count_int == 0) {
++                min_int = number_int;
++                max_int = number_int;
++            } else if (number_int > max_int) max_int = number_int;
++            else if (number_int < min_int) min_int = number_int;
++            count_int++;
++            sum_int += number_int;
++            return true;
++        } catch (NumberFormatException e) {
++            return false;
++        }
++    }
++
++    public boolean check_double(String line) {
++        try {
++            double number_float = Double.parseDouble(line);
++            if (count_float == 0) {
++                min_float = number_float;
++                max_float = number_float;
++            } else if (number_float > max_float) max_float = number_float;
++            else if (number_float < min_float) min_float = number_float;
++            count_float++;
++            sum_float += number_float;
++            return true;
++        } catch (NumberFormatException e) {
++            return false;
++        }
++    }
++
++    public boolean check_string(String line) {
++        if (!line.matches(".*\\d+.*")) {
++            if (count_string == 0) {
++                str_max = line.length();
++                str_min = line.length();
++            } else if (line.length() > str_max) str_max = line.length();
++            else if (line.length() < str_min) str_min = line.length();
++            count_string++;
++            return true;
++        } else return false;
++    }
++
++    public static int get_countInt() {
++        return count_int;
++    }
++
++    public static int get_countDouble() {
++        return count_float;
++    }
++
++    public static int get_countString() {
++        return count_string;
++    }
++
++
++    public static void statistics(Flags flags, String result_int, String result_float, String result_string) {
++        if (flags.s || flags.f) {
++            System.out.println("STATISTICS:\n\n" + result_int + "\nNumber of elements:" + count_int + "\n");
++            System.out.println(result_float + "\nNumber of elements:" + count_float + "\n");
++            System.out.println(result_string + "\nNumber of elements:" + count_string + "\n");
++        }
++        if (flags.f) {
++            if (count_int != 0)
++                System.out.println(result_int + "\nmin:" + min_int + "\nmax:" + max_int + "\nsum:" + sum_int + "\narithmetic mean:" + (double) (sum_int / count_int) + "\n");
++            if (count_float != 0)
++                System.out.println(result_float + "\nmin:" + min_float + "\nmax:" + max_float + "\nsum:" + sum_float + "\narithmetic mean:" + (sum_float / count_float) + "\n");
++            if (count_string != 0) System.out.println(result_string + "\nmin:" + str_min + "\nmax:" + str_max);
++        }
++    }
+ }
+Index: Solution.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Solution {\n}\n
+===================================================================
+diff --git a/Solution.java b/Solution.java
+--- a/Solution.java	(revision d273eaec210ada08f0bdccb021480b72e11a23c0)
++++ b/Solution.java	(date 1737739201430)
+@@ -1,2 +1,121 @@
++import java.io.*;
++import java.util.ArrayList;
++
++
+ public class Solution {
++
++    private static String result_int = "integers.txt", result_floats = "floats.txt", result_string = "strings.txt";
++
++    public static void main(String[] args) {
++        Flags flags = new Flags(false, false, false, false, false);
++        parsing(flags, args);
++    }
++
++    private static void parsing(Flags flags, String[] args) {
++        String way = null;
++        ArrayList<String> files_read = new ArrayList<>();
++        for (int i = 0; i < args.length; i++) {
++            if (args[i].contains(".txt")) files_read.add(args[i]);
++            else {
++                switch (args[i]) {
++                    case "-o":
++                        flags.o = true;
++                        i++;
++                        way = args[i];
++                        break;
++                    case "-p":
++                        flags.p = true;
++                        i++;
++                        result_int = args[i].concat(result_int);
++                        result_floats = args[i].concat(result_floats);
++                        result_string = args[i].concat(result_string);
++                        break;
++                    case "-s":
++                        flags.s = true;
++                        break;
++                    case "-f":
++                        flags.f = true;
++                        break;
++                    case "-a":
++                        flags.a = true;
++                        break;
++                    default:
++                        System.out.println("There is no flag [" + args[i] + "]");
++                }
++            }
++        }
++        if (way != null) {
++            result_int = way.concat(result_int);
++            result_floats = way.concat(result_floats);
++            result_string = way.concat(result_string);
++        }
++        reading_file(flags, files_read);
++        if (flags.f || flags.s) Str.statistics(flags, result_int, result_floats, result_string);
++    }
++
++    private static void reading_file(Flags flags, ArrayList<String> files_read) {
++        BufferedWriter writer_int = null, writer_float = null, writer_string = null;
++        ArrayList<BufferedReader> bufferedReaders = new ArrayList<>();
++        boolean all_files_finish = false;
++        for (String arg : files_read) {
++            try {
++                bufferedReaders.add(new BufferedReader(new FileReader(arg)));
++            } catch (IOException e) {
++                System.out.println("error: the file[" + arg + "] was not found for reading");
++            }
++        }
++        try {
++            while (!all_files_finish) {
++                all_files_finish = true;
++                for (BufferedReader reader : bufferedReaders) {
++                    String line;
++                    Str str = new Str();
++                    if ((line = reader.readLine()) != null) {
++                        all_files_finish = false;
++                        if (str.check_int(line)) {
++                            if (Str.get_countInt() == 1) writer_int = open_writer(flags, result_int);
++                            if (writer_int != null) writer_int.write(line + "\n");
++                        } else if (str.check_double(line)) {
++                            if (Str.get_countDouble() == 1) writer_float = open_writer(flags, result_floats);
++                            if (writer_float != null) writer_float.write(line + "\n");
++                        } else if (str.check_string(line)) {
++                            if (Str.get_countString() == 1) writer_string = open_writer(flags, result_string);
++                            if (writer_string != null) writer_string.write(line + "\n");
++                        } else System.out.println("error: the string contains numbers and symbols");
++                    }
++                }
++            }
++        } catch (IOException e) {
++            System.out.println("Error reading the file");
++        }
++        close_writer(writer_int);
++        close_writer(writer_float);
++        close_writer(writer_string);
++    }
++
++    private static BufferedWriter open_writer(Flags flags, String result_file) {
++        if (flags.a) {
++            try {
++                return new BufferedWriter(new FileWriter(result_file, true));
++            } catch (IOException e) {
++                throw new RuntimeException("error: when opening the results file[" + result_file + "] for additional recording");
++            }
++        } else {
++            try {
++                return new BufferedWriter(new FileWriter(result_file));
++            } catch (IOException e) {
++                throw new RuntimeException("error: when opening the results file[" + result_file + "] for overwriting");
++            }
++        }
++    }
++
++    private static void close_writer(BufferedWriter writer) {
++        if (writer != null) {
++            try {
++                writer.close();
++            } catch (IOException e) {
++                System.out.println("error:close file");
++            }
++        }
++    }
+ }
+Index: Flags.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Flags {\n}\n
+===================================================================
+diff --git a/Flags.java b/Flags.java
+--- a/Flags.java	(revision d273eaec210ada08f0bdccb021480b72e11a23c0)
++++ b/Flags.java	(date 1737628407133)
+@@ -1,2 +1,15 @@
+ public class Flags {
++    public boolean o;
++    public boolean p;
++    public boolean s;
++    public boolean f;
++    public boolean a;
++
++    public Flags(boolean o, boolean p, boolean s, boolean f, boolean a) {
++        this.o = o;
++        this.p = p;
++        this.s = s;
++        this.f = f;
++        this.a = a;
++    }
+ }
