@@ -1,0 +1,45 @@
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># util
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision d273eaec210ada08f0bdccb021480b72e11a23c0)
++++ b/README.md	(date 1737738224396)
+@@ -1,1 +1,12 @@
+-# util
+\ No newline at end of file
++#Инструкция
++Версия Java:
++openjdk version "21.0.5" 2024-10-15
++OpenJDK Runtime Environment (build 21.0.5+11)
++OpenJDK 64-Bit Server VM (build 21.0.5+11, mixed mode, sharing)
++
++Исполняемый util.jar файл находится в out/artifacts/util_jar
++Особенности выполнения программы:
++1)Если строка содержит числа и символы,то  она не добавляется ни в один файл,а в консоли появляется информация об этом.
++2)Если указан не верный путь с флагом -o,то программа сообщает об ошибке и останавливается.
++3)Если какого-то типа данных во входящих файлах нет,то по этому исходящему файлу доступно только краткая статистика(Полная выводиться не будет т.к. это не имеет особого смысла.
++4)Если используется флаг -a а исходящих файлов нет,то они будут созданы.
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Compiled class file\n*.class\n\n# Log file\n*.log\n\n# BlueJ files\n*.ctxt\n\n# Mobile Tools for Java (J2ME)\n.mtj.tmp/\n\n# Package Files #\n*.jar\n*.war\n*.nar\n*.ear\n*.zip\n*.tar.gz\n*.rar\n\n# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml\nhs_err_pid*\nreplay_pid*\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision d273eaec210ada08f0bdccb021480b72e11a23c0)
++++ b/.gitignore	(date 1737739004628)
+@@ -11,7 +11,7 @@
+ .mtj.tmp/
+ 
+ # Package Files #
+-*.jar
++#*.jar
+ *.war
+ *.nar
+ *.ear
